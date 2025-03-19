@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Hero from "../components/Hero";
 import { useEffect } from "react";
+import { Circle, CircleDashed, FileText, ShieldCheck, Lock } from "lucide-react";
 
 const Datenschutz = () => {
   useEffect(() => {
@@ -29,7 +30,14 @@ const Datenschutz = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white relative overflow-hidden">
+      {/* Decorative elements */}
+      <div className="decorative-circle w-72 h-72 bg-betclever-gold/5 top-1/3 -right-20 animate-pulse-slow"></div>
+      <div className="decorative-circle w-80 h-80 bg-betclever-darkblue/5 bottom-1/4 -left-32 animate-pulse-slow"></div>
+      <div className="absolute top-1/2 right-10 opacity-10">
+        <CircleDashed size={100} className="text-betclever-gold animate-spin-slow" />
+      </div>
+      
       <Navbar />
       
       <Hero
@@ -38,10 +46,13 @@ const Datenschutz = () => {
         description="Der Schutz deiner persönlichen Daten hat für uns höchste Priorität. Wir halten uns strikt an die geltenden Datenschutzbestimmungen der Europäischen Union und Deutschlands."
       />
       
-      <section className="py-16 md:py-24">
+      <section className="py-16 md:py-24 relative">
         <div className="container mx-auto container-padding">
           <div className="max-w-4xl mx-auto">
-            <div className="mb-16 animate-on-scroll">
+            <div className="mb-16 animate-on-scroll elegant-card">
+              <div className="absolute top-5 right-5 text-betclever-gold/30">
+                <FileText size={60} />
+              </div>
               <h2 className="text-2xl md:text-3xl font-bold text-betclever-darkblue mb-6">
                 Gesetzliche Grundlagen
               </h2>
@@ -57,7 +68,10 @@ const Datenschutz = () => {
             
             <div className="subtle-line"></div>
             
-            <div className="mb-16 animate-on-scroll">
+            <div className="mb-16 animate-on-scroll elegant-card">
+              <div className="absolute top-5 right-5 text-betclever-gold/30">
+                <Circle size={60} />
+              </div>
               <h2 className="text-2xl md:text-3xl font-bold text-betclever-darkblue mb-6">
                 Welche Daten erfassen wir?
               </h2>
@@ -74,7 +88,10 @@ const Datenschutz = () => {
             
             <div className="subtle-line"></div>
             
-            <div className="mb-16 animate-on-scroll">
+            <div className="mb-16 animate-on-scroll elegant-card">
+              <div className="absolute top-5 right-5 text-betclever-gold/30">
+                <ShieldCheck size={60} />
+              </div>
               <h2 className="text-2xl md:text-3xl font-bold text-betclever-darkblue mb-6">
                 Warum erfassen wir diese Daten?
               </h2>
@@ -91,7 +108,10 @@ const Datenschutz = () => {
             
             <div className="subtle-line"></div>
             
-            <div className="mb-16 animate-on-scroll">
+            <div className="mb-16 animate-on-scroll elegant-card">
+              <div className="absolute top-5 right-5 text-betclever-gold/30">
+                <Lock size={60} />
+              </div>
               <h2 className="text-2xl md:text-3xl font-bold text-betclever-darkblue mb-6">
                 Sicherheit & Speicherung deiner Daten
               </h2>
@@ -107,7 +127,10 @@ const Datenschutz = () => {
             
             <div className="subtle-line"></div>
             
-            <div className="animate-on-scroll">
+            <div className="animate-on-scroll elegant-card">
+              <div className="absolute top-5 right-5 text-betclever-gold/30">
+                <ShieldCheck size={60} />
+              </div>
               <h2 className="text-2xl md:text-3xl font-bold text-betclever-darkblue mb-6">
                 Deine Rechte
               </h2>

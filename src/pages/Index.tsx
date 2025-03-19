@@ -5,8 +5,7 @@ import AffiliateInfo from "../components/AffiliateInfo";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { Circle, CircleDashed, Sparkles } from "lucide-react";
 
 const Index = () => {
   useEffect(() => {
@@ -33,7 +32,13 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white relative overflow-hidden">
+      {/* Decorative elements */}
+      <div className="decorative-circle w-64 h-64 bg-betclever-gold/5 top-1/4 -left-20 animate-pulse-slow"></div>
+      <div className="decorative-circle w-96 h-96 bg-betclever-darkblue/5 bottom-1/4 -right-32 animate-pulse-slow"></div>
+      <div className="decorative-line w-1/3 top-1/3 left-0 animate-pulse-slow"></div>
+      <div className="decorative-line w-1/4 bottom-1/4 right-0 animate-pulse-slow"></div>
+      
       <Navbar />
       
       <Hero
@@ -49,9 +54,17 @@ const Index = () => {
       
       <AffiliateInfo />
       
-      <section className="section-spacing">
+      <section className="py-24 md:py-32 relative overflow-hidden">
+        <div className="absolute top-1/4 right-1/4 opacity-10">
+          <Sparkles size={40} className="text-betclever-gold animate-float" />
+        </div>
+        <div className="absolute bottom-1/3 left-1/3 opacity-10">
+          <Circle size={80} className="text-betclever-darkblue animate-pulse-slow" />
+        </div>
+        <div className="absolute top-1/2 left-1/5 w-40 h-40 border border-betclever-gold/10 rounded-full animate-spin-slow"></div>
+        
         <div className="container mx-auto container-padding">
-          <div className="max-w-4xl mx-auto bg-white rounded-2xl p-10 md:p-16 shadow-xl border border-gray-100 hover:shadow-2xl transition-shadow duration-300 animate-on-scroll">
+          <div className="max-w-4xl mx-auto elegant-card hover-lift animate-on-scroll">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-betclever-darkblue mb-6">
                 Bereit, mit BETCLEVER zu starten?
@@ -60,13 +73,6 @@ const Index = () => {
                 Melde dich jetzt an und sichere dir 250€. Steige danach direkt als 
                 Affiliate ein und verdiene für jeden geworbenen Teilnehmer weitere 250€.
               </p>
-              <Link
-                to="/teilnahme"
-                className="inline-flex items-center gap-2 bg-betclever-gold hover:bg-betclever-gold/90 text-white px-8 py-4 rounded-md font-medium text-md button-hover-effect"
-              >
-                Mehr erfahren
-                <ArrowRight size={18} />
-              </Link>
             </div>
           </div>
         </div>

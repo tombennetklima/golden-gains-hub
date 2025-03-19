@@ -1,5 +1,5 @@
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Circle, CircleDashed } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface HeroProps {
@@ -24,8 +24,18 @@ const Hero = ({
   className = "",
 }: HeroProps) => {
   return (
-    <section className={`pt-32 pb-20 md:pt-40 md:pb-28 ${className}`}>
-      <div className="container mx-auto container-padding">
+    <section className={`pt-32 pb-20 md:pt-40 md:pb-28 relative overflow-hidden ${className}`}>
+      {/* Decorative elements */}
+      <div className="absolute top-20 right-10 opacity-10 animate-spin-slow">
+        <Circle size={180} className="text-betclever-gold" />
+      </div>
+      <div className="absolute bottom-20 left-10 opacity-10 animate-pulse-slow">
+        <CircleDashed size={120} className="text-betclever-darkblue" />
+      </div>
+      <div className="absolute top-1/3 left-1/4 w-32 h-32 rounded-full border border-betclever-gold/10 animate-pulse-slow"></div>
+      <div className="absolute top-2/3 right-1/4 w-48 h-48 rounded-full border border-betclever-darkblue/10 animate-pulse-slow"></div>
+      
+      <div className="container mx-auto container-padding relative z-10">
         <div className="max-w-3xl mx-auto text-center">
           {subtitle && (
             <div className="inline-block px-3 py-1 mb-6 bg-betclever-darkblue/5 text-betclever-darkblue rounded-full text-sm font-medium tracking-wide animate-fade-in">
@@ -62,6 +72,11 @@ const Hero = ({
             )
           )}
         </div>
+      </div>
+      
+      {/* Diagonal line decoration */}
+      <div className="absolute bottom-0 left-0 right-0 h-20 overflow-hidden">
+        <div className="w-full h-40 transform rotate-2 translate-y-10 bg-betclever-beige/20"></div>
       </div>
     </section>
   );

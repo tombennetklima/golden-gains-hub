@@ -1,12 +1,21 @@
 
 import { Link } from "react-router-dom";
+import { Circle, CircleDashed } from "lucide-react";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-betclever-darkblue text-white py-16">
-      <div className="container mx-auto container-padding">
+    <footer className="bg-betclever-darkblue text-white py-16 relative overflow-hidden">
+      {/* Decorative elements */}
+      <div className="absolute top-0 right-10 opacity-5">
+        <Circle size={120} className="text-white" />
+      </div>
+      <div className="absolute bottom-10 left-10 opacity-5">
+        <CircleDashed size={80} className="text-white" />
+      </div>
+      
+      <div className="container mx-auto container-padding relative z-10">
         <div className="grid md:grid-cols-2 gap-10 mb-10">
           <div>
             <Link to="/" className="inline-block mb-4">
