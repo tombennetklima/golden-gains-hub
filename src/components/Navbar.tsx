@@ -57,14 +57,12 @@ const Navbar = () => {
               {item.name}
             </Link>
           ))}
-          <a
-            href="https://form.jotform.com/250773154185055"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to="/teilnahme"
             className="ml-4 bg-betclever-gold text-white px-5 py-2 rounded-md font-medium text-sm button-hover-effect"
           >
-            Jetzt anmelden
-          </a>
+            Mehr erfahren
+          </Link>
         </nav>
 
         {/* Mobile Menu Button */}
@@ -93,14 +91,12 @@ const Navbar = () => {
                 {item.name}
               </Link>
             ))}
-            <a
-              href="https://form.jotform.com/250773154185055"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to="/teilnahme"
               className="bg-betclever-gold text-white w-full text-center px-5 py-3 rounded-md font-medium text-sm"
             >
-              Jetzt anmelden
-            </a>
+              Mehr erfahren
+            </Link>
           </div>
         </div>
       )}

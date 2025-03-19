@@ -1,6 +1,7 @@
 
 import { CheckCircle } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 
 const steps = [
   {
@@ -77,7 +78,7 @@ const AffiliateInfo = () => {
           {steps.map((step, index) => (
             <div
               key={index}
-              className="step-item flex gap-4 animate-on-scroll"
+              className="step-item flex gap-4 animate-on-scroll transform hover:-translate-y-1 transition-transform duration-300"
             >
               <div className="flex-shrink-0 mt-1">
                 <CheckCircle
@@ -98,14 +99,12 @@ const AffiliateInfo = () => {
         </div>
 
         <div className="text-center mt-16">
-          <a
-            href="https://form.jotform.com/250773154185055"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to="/teilnahme"
             className="inline-block bg-betclever-gold hover:bg-betclever-gold/90 text-white px-8 py-4 rounded-md font-medium text-md button-hover-effect"
           >
-            Jetzt als Affiliate starten
-          </a>
+            Mehr erfahren
+          </Link>
         </div>
       </div>
     </section>

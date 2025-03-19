@@ -5,6 +5,8 @@ import AffiliateInfo from "../components/AffiliateInfo";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
 const Index = () => {
   useEffect(() => {
@@ -38,7 +40,9 @@ const Index = () => {
         title="BETCLEVER – Dein Weg zu garantierten Gewinnen"
         description="Wir haben uns auf Matched Betting spezialisiert und nutzen Willkommensboni von Sportwettenanbietern, um garantierte Gewinne zu erzielen. Seit über drei Jahren sind wir in diesem Bereich erfolgreich und bieten dir die Möglichkeit, von unserem bewährten System zu profitieren."
         showButton={true}
-        buttonText="Jetzt anmelden"
+        buttonText="Mehr erfahren"
+        buttonLink="/teilnahme"
+        useButtonAsLink={true}
       />
       
       <Stats />
@@ -47,7 +51,7 @@ const Index = () => {
       
       <section className="section-spacing">
         <div className="container mx-auto container-padding">
-          <div className="max-w-4xl mx-auto bg-white rounded-2xl p-10 md:p-16 shadow-xl border border-gray-100">
+          <div className="max-w-4xl mx-auto bg-white rounded-2xl p-10 md:p-16 shadow-xl border border-gray-100 hover:shadow-2xl transition-shadow duration-300 animate-on-scroll">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-betclever-darkblue mb-6">
                 Bereit, mit BETCLEVER zu starten?
@@ -56,14 +60,13 @@ const Index = () => {
                 Melde dich jetzt an und sichere dir 250€. Steige danach direkt als 
                 Affiliate ein und verdiene für jeden geworbenen Teilnehmer weitere 250€.
               </p>
-              <a
-                href="https://form.jotform.com/250773154185055"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block bg-betclever-gold hover:bg-betclever-gold/90 text-white px-8 py-4 rounded-md font-medium text-md button-hover-effect"
+              <Link
+                to="/teilnahme"
+                className="inline-flex items-center gap-2 bg-betclever-gold hover:bg-betclever-gold/90 text-white px-8 py-4 rounded-md font-medium text-md button-hover-effect"
               >
-                Jetzt anmelden & mitmachen
-              </a>
+                Mehr erfahren
+                <ArrowRight size={18} />
+              </Link>
             </div>
           </div>
         </div>

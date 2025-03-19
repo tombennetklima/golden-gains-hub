@@ -51,17 +51,12 @@ const Footer = () => {
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-medium mb-4">Mehr</h3>
+              <h3 className="text-lg font-medium mb-4">Kontakt</h3>
               <ul className="space-y-2">
                 <li>
-                  <a
-                    href="https://form.jotform.com/250773154185055"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-white/70 hover:text-betclever-gold transition-colors"
-                  >
-                    Anmeldung
-                  </a>
+                  <span className="text-white/70">
+                    info@betclever.de
+                  </span>
                 </li>
               </ul>
             </div>

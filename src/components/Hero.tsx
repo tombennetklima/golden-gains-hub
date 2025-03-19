@@ -1,5 +1,6 @@
 
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface HeroProps {
   title: string;
@@ -8,6 +9,7 @@ interface HeroProps {
   showButton?: boolean;
   buttonText?: string;
   buttonLink?: string;
+  useButtonAsLink?: boolean;
   className?: string;
 }
 
@@ -16,8 +18,9 @@ const Hero = ({
   subtitle,
   description,
   showButton = false,
-  buttonText = "Jetzt anmelden",
-  buttonLink = "https://form.jotform.com/250773154185055",
+  buttonText = "Mehr erfahren",
+  buttonLink = "/teilnahme",
+  useButtonAsLink = true,
   className = "",
 }: HeroProps) => {
   return (
@@ -38,15 +41,25 @@ const Hero = ({
             </p>
           )}
           {showButton && (
-            <a
-              href={buttonLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-betclever-gold hover:bg-betclever-gold/90 text-white px-8 py-4 rounded-md font-medium text-md tracking-wide button-hover-effect animate-slide-in delay-200"
-            >
-              {buttonText}
-              <ArrowRight size={18} />
-            </a>
+            useButtonAsLink ? (
+              <Link
+                to={buttonLink}
+                className="inline-flex items-center gap-2 bg-betclever-gold hover:bg-betclever-gold/90 text-white px-8 py-4 rounded-md font-medium text-md tracking-wide button-hover-effect animate-slide-in delay-200"
+              >
+                {buttonText}
+                <ArrowRight size={18} />
+              </Link>
+            ) : (
+              <a
+                href={buttonLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-betclever-gold hover:bg-betclever-gold/90 text-white px-8 py-4 rounded-md font-medium text-md tracking-wide button-hover-effect animate-slide-in delay-200"
+              >
+                {buttonText}
+                <ArrowRight size={18} />
+              </a>
+            )
           )}
         </div>
       </div>
