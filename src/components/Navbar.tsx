@@ -18,7 +18,11 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
+    // Close mobile menu when location changes
     setIsMobileMenuOpen(false);
+    
+    // Scroll to top when the route changes
+    window.scrollTo(0, 0);
   }, [location.pathname]);
 
   const navItems = [
