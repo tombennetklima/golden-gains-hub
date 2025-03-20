@@ -25,7 +25,7 @@ const registerSchema = z.object({
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 interface RegisterFormProps {
-  onSuccess: (email: string) => void;
+  onSuccess: () => void;
 }
 
 const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
@@ -50,7 +50,7 @@ const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
     try {
       // In a real app, this would be an API call to your auth service
       await mockAuthService.register(values.username, values.email, values.password);
-      onSuccess(values.email);
+      onSuccess();
     } catch (err) {
       setError("Diese E-Mail-Adresse wird bereits verwendet. Bitte wähle eine andere.");
     } finally {

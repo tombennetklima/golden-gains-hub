@@ -6,11 +6,24 @@ export interface User {
   id: string;
   username: string;
   email: string;
-  isVerified: boolean;
+  isAdmin: boolean;
 }
 
 // Simulate localStorage for user data
-const users: Record<string, User> = {};
+const users: Record<string, User> = {
+  "admin-id": {
+    id: "admin-id",
+    username: "admin",
+    email: "admin@betclever.de",
+    isAdmin: true
+  }
+};
+
+// Set admin password (in a real app, this would be hashed)
+const userPasswords: Record<string, string> = {
+  "admin-id": "Ver4Wittert!Ver4Wittert!"
+};
+
 let currentUser: User | null = null;
 
 // Simulate server delay
@@ -31,14 +44,12 @@ export const mockAuthService = {
       id: userId,
       username,
       email,
-      isVerified: false
+      isAdmin: false
     };
     
     users[userId] = user;
+    userPasswords[userId] = password;
     
-    // In a real app, this would send a verification email
-    console.log(`Verification email sent to ${email}`);
-
     return;
   },
   
@@ -47,12 +58,11 @@ export const mockAuthService = {
     await delay(1000); // Simulate network delay
     
     const user = Object.values(users).find(user => user.email === email);
+    const userId = user?.id;
     
-    if (!user) {
+    if (!user || !userId || userPasswords[userId] !== password) {
       throw new Error("Invalid email or password");
     }
-    
-    // In a real app, you would verify the password hash here
     
     currentUser = user;
     // In a real app, you would set a JWT token in localStorage or cookies
@@ -82,9 +92,52 @@ export const mockAuthService = {
     return users[userId] || null;
   },
   
-  // Verify email with token
-  async verifyEmail(userId: string, token: string): Promise<void> {
+  // Admin Functions
+  // Get all users (admin only)
+  async getAllUsers(): Promise<User[]> {
+    await delay(800); // Simulate network delay
+    
+    // In a real app, you would check if the current user is an admin
+    const currentUserId = localStorage.getItem("currentUserId");
+    const currentUser = currentUserId ? users[currentUserId] : null;
+    
+    if (!currentUser?.isAdmin) {
+      throw new Error("Unauthorized");
+    }
+    
+    return Object.values(users);
+  },
+  
+  // Search users (admin only)
+  async searchUsers(query: string): Promise<User[]> {
+    await delay(800); // Simulate network delay
+    
+    // In a real app, you would check if the current user is an admin
+    const currentUserId = localStorage.getItem("currentUserId");
+    const currentUser = currentUserId ? users[currentUserId] : null;
+    
+    if (!currentUser?.isAdmin) {
+      throw new Error("Unauthorized");
+    }
+    
+    const lowercaseQuery = query.toLowerCase();
+    return Object.values(users).filter(user => 
+      user.email.toLowerCase().includes(lowercaseQuery) || 
+      user.username.toLowerCase().includes(lowercaseQuery)
+    );
+  },
+  
+  // Update user (admin only)
+  async updateUser(userId: string, data: Partial<User>): Promise<User> {
     await delay(1000); // Simulate network delay
+    
+    // In a real app, you would check if the current user is an admin
+    const currentUserId = localStorage.getItem("currentUserId");
+    const currentUser = currentUserId ? users[currentUserId] : null;
+    
+    if (!currentUser?.isAdmin) {
+      throw new Error("Unauthorized");
+    }
     
     const user = users[userId];
     
@@ -92,43 +145,69 @@ export const mockAuthService = {
       throw new Error("User not found");
     }
     
-    user.isVerified = true;
+    // Don't allow changing admin status of admin account
+    if (userId === "admin-id" && data.isAdmin === false) {
+      throw new Error("Cannot remove admin status from main admin account");
+    }
+    
+    // Update user data
+    users[userId] = {
+      ...user,
+      ...data,
+      id: userId // Ensure ID doesn't change
+    };
+    
+    return users[userId];
+  },
+  
+  // Update user password (admin only)
+  async updateUserPassword(userId: string, newPassword: string): Promise<void> {
+    await delay(1000); // Simulate network delay
+    
+    // In a real app, you would check if the current user is an admin
+    const currentUserId = localStorage.getItem("currentUserId");
+    const currentUser = currentUserId ? users[currentUserId] : null;
+    
+    if (!currentUser?.isAdmin) {
+      throw new Error("Unauthorized");
+    }
+    
+    const user = users[userId];
+    
+    if (!user) {
+      throw new Error("User not found");
+    }
+    
+    userPasswords[userId] = newPassword;
     
     return;
   },
   
-  // Request password reset
-  async requestPasswordReset(email: string): Promise<void> {
+  // Delete user (admin only)
+  async deleteUser(userId: string): Promise<void> {
     await delay(1000); // Simulate network delay
     
-    const user = Object.values(users).find(user => user.email === email);
+    // In a real app, you would check if the current user is an admin
+    const currentUserId = localStorage.getItem("currentUserId");
+    const currentUser = currentUserId ? users[currentUserId] : null;
     
-    if (!user) {
-      // Don't reveal if email exists or not for security reasons
-      return;
+    if (!currentUser?.isAdmin) {
+      throw new Error("Unauthorized");
     }
     
-    // In a real app, this would send a password reset email
-    const resetToken = Math.random().toString(36).substring(2, 15);
-    console.log(`Password reset email sent to ${email} with token: ${resetToken}`);
-    
-    return;
-  },
-  
-  // Reset password with token
-  async resetPassword(email: string, token: string, newPassword: string): Promise<void> {
-    await delay(1000); // Simulate network delay
-    
-    const user = Object.values(users).find(user => user.email === email);
-    
-    if (!user) {
-      throw new Error("Invalid reset token");
+    // Don't allow deleting admin account
+    if (userId === "admin-id") {
+      throw new Error("Cannot delete main admin account");
     }
     
-    // In a real app, you would verify the token here
-    // Then update the password hash in the database
+    const user = users[userId];
     
-    console.log(`Password updated for user: ${user.email}`);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    
+    delete users[userId];
+    delete userPasswords[userId];
     
     return;
   }

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { mockAuthService } from "@/lib/mockAuthService";
+import { useNavigate } from "react-router-dom";
 
 const loginSchema = z.object({
   email: z.string().email("Ungültige E-Mail-Adresse"),
@@ -23,6 +24,7 @@ interface LoginFormProps {
 const LoginForm = ({ onSuccess, onForgotPassword }: LoginFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -37,8 +39,9 @@ const LoginForm = ({ onSuccess, onForgotPassword }: LoginFormProps) => {
     setError(null);
 
     try {
-      // In a real app, this would be an API call to your auth service
       await mockAuthService.login(values.email, values.password);
+      // Redirect to dashboard after successful login
+      navigate("/dashboard");
       onSuccess();
     } catch (err) {
       setError("Falsche E-Mail oder Passwort. Bitte versuche es erneut.");
