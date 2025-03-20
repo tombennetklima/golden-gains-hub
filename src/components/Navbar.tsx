@@ -1,12 +1,36 @@
 
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Menu, X, User, LogOut } from "lucide-react";
+import { mockAuthService } from "@/lib/mockAuthService";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useToast } from "@/hooks/use-toast";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState<null | { username: string }>(null);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  // Check authentication status on mount and when location changes
+  useEffect(() => {
+    const checkAuth = async () => {
+      const user = await mockAuthService.getCurrentUser();
+      setIsLoggedIn(!!user);
+      setCurrentUser(user);
+    };
+    
+    checkAuth();
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,11 +49,27 @@ const Navbar = () => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
+  const handleLogout = async () => {
+    await mockAuthService.logout();
+    setIsLoggedIn(false);
+    setCurrentUser(null);
+    toast({
+      title: "Erfolgreich abgemeldet",
+      description: "Du wurdest erfolgreich abgemeldet."
+    });
+    navigate("/");
+  };
+
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Datenschutz", path: "/datenschutz" },
     { name: "Teilnahme & Affiliate", path: "/teilnahme" },
   ];
+
+  // Add Dashboard conditionally if logged in
+  const allNavItems = isLoggedIn 
+    ? [...navItems, { name: "Dashboard", path: "/dashboard" }] 
+    : navItems;
 
   return (
     <header
@@ -48,7 +88,7 @@ const Navbar = () => {
 
         {/* Desktop Menu */}
         <nav className="hidden md:flex items-center gap-8">
-          {navItems.map((item) => (
+          {allNavItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
@@ -61,22 +101,35 @@ const Navbar = () => {
               {item.name}
             </Link>
           ))}
-          <Link
-            to="/auth"
-            className={`text-sm font-medium transition-colors hover:text-betclever-gold ${
-              location.pathname === "/auth"
-                ? "text-betclever-gold"
-                : "text-betclever-darkblue"
-            }`}
-          >
-            Anmelden
-          </Link>
-          <Link
-            to="/teilnahme"
-            className="ml-4 bg-betclever-gold text-white px-5 py-2 rounded-md font-medium text-sm button-hover-effect"
-          >
-            Mehr erfahren
-          </Link>
+          
+          {isLoggedIn ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Avatar className="cursor-pointer h-8 w-8 ml-4">
+                  <AvatarFallback className="bg-betclever-gold text-white">
+                    {currentUser?.username?.charAt(0).toUpperCase() || 'U'}
+                  </AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Abmelden</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link
+              to="/auth"
+              className={`text-sm font-medium transition-colors hover:text-betclever-gold ${
+                location.pathname === "/auth"
+                  ? "text-betclever-gold"
+                  : "text-betclever-darkblue"
+              }`}
+            >
+              Anmelden
+            </Link>
+          )}
         </nav>
 
         {/* Mobile Menu Button */}
@@ -92,7 +145,7 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white absolute top-full left-0 right-0 shadow-md animate-fade-in">
           <div className="container mx-auto py-4 flex flex-col gap-4 container-padding">
-            {navItems.map((item) => (
+            {allNavItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
@@ -105,22 +158,27 @@ const Navbar = () => {
                 {item.name}
               </Link>
             ))}
-            <Link
-              to="/auth"
-              className={`text-sm font-medium py-2 transition-colors hover:text-betclever-gold ${
-                location.pathname === "/auth"
-                  ? "text-betclever-gold"
-                  : "text-betclever-darkblue"
-              }`}
-            >
-              Anmelden
-            </Link>
-            <Link
-              to="/teilnahme"
-              className="bg-betclever-gold text-white w-full text-center px-5 py-3 rounded-md font-medium text-sm"
-            >
-              Mehr erfahren
-            </Link>
+            
+            {isLoggedIn ? (
+              <button 
+                onClick={handleLogout}
+                className="flex items-center text-sm font-medium py-2 text-betclever-darkblue hover:text-betclever-gold"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Abmelden
+              </button>
+            ) : (
+              <Link
+                to="/auth"
+                className={`text-sm font-medium py-2 transition-colors hover:text-betclever-gold ${
+                  location.pathname === "/auth"
+                    ? "text-betclever-gold"
+                    : "text-betclever-darkblue"
+                }`}
+              >
+                Anmelden
+              </Link>
+            )}
           </div>
         </div>
       )}
