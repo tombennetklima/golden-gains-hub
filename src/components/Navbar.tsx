@@ -62,6 +62,16 @@ const Navbar = () => {
             </Link>
           ))}
           <Link
+            to="/auth"
+            className={`text-sm font-medium transition-colors hover:text-betclever-gold ${
+              location.pathname === "/auth"
+                ? "text-betclever-gold"
+                : "text-betclever-darkblue"
+            }`}
+          >
+            Anmelden
+          </Link>
+          <Link
             to="/teilnahme"
             className="ml-4 bg-betclever-gold text-white px-5 py-2 rounded-md font-medium text-sm button-hover-effect"
           >
@@ -95,6 +105,16 @@ const Navbar = () => {
                 {item.name}
               </Link>
             ))}
+            <Link
+              to="/auth"
+              className={`text-sm font-medium py-2 transition-colors hover:text-betclever-gold ${
+                location.pathname === "/auth"
+                  ? "text-betclever-gold"
+                  : "text-betclever-darkblue"
+              }`}
+            >
+              Anmelden
+            </Link>
             <Link
               to="/teilnahme"
               className="bg-betclever-gold text-white w-full text-center px-5 py-3 rounded-md font-medium text-sm"
