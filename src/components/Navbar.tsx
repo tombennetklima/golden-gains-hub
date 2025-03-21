@@ -11,12 +11,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/lib/supabase";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState<null | { username: string }>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -24,12 +26,49 @@ const Navbar = () => {
   // Check authentication status on mount and when location changes
   useEffect(() => {
     const checkAuth = async () => {
-      const user = await supabaseService.getCurrentUser();
-      setIsLoggedIn(!!user);
-      setCurrentUser(user);
+      setIsLoading(true);
+      try {
+        const { data } = await supabase.auth.getSession();
+        const hasSession = !!data.session;
+        setIsLoggedIn(hasSession);
+        
+        if (hasSession) {
+          const user = await supabaseService.getCurrentUser();
+          setCurrentUser(user);
+        } else {
+          setCurrentUser(null);
+        }
+      } catch (error) {
+        console.error("Error checking auth:", error);
+        setIsLoggedIn(false);
+        setCurrentUser(null);
+      } finally {
+        setIsLoading(false);
+      }
     };
     
     checkAuth();
+    
+    // Listen for auth state changes
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          setIsLoggedIn(true);
+          const user = await supabaseService.getCurrentUser();
+          setCurrentUser(user);
+        } else if (event === 'SIGNED_OUT') {
+          setIsLoggedIn(false);
+          setCurrentUser(null);
+        }
+      }
+    );
+    
+    return () => {
+      // Clean up the listener
+      if (authListener && authListener.subscription) {
+        authListener.subscription.unsubscribe();
+      }
+    };
   }, [location.pathname]);
 
   useEffect(() => {

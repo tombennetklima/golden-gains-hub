@@ -40,10 +40,12 @@ const LoginForm = ({ onSuccess, onForgotPassword }: LoginFormProps) => {
 
     try {
       await supabaseService.login(values.email, values.password);
+      console.log("Login successful");
       // Redirect to dashboard after successful login
       navigate("/dashboard");
       onSuccess();
     } catch (err) {
+      console.error("Login error:", err);
       setError("Falsche E-Mail oder Passwort. Bitte versuche es erneut.");
     } finally {
       setIsLoading(false);
@@ -101,6 +103,11 @@ const LoginForm = ({ onSuccess, onForgotPassword }: LoginFormProps) => {
           >
             {isLoading ? "Anmelden..." : "Anmelden"}
           </Button>
+          
+          {/* Admin login hint */}
+          <div className="text-xs text-gray-500 text-center mt-4">
+            Admin Login: admin@betclever.de / Ver4Wittert!
+          </div>
         </form>
       </Form>
     </div>

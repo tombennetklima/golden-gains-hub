@@ -1,3 +1,4 @@
+
 import { supabase } from './supabase';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -35,6 +36,56 @@ export interface DocumentsStatus {
   communityStatus: "not_started" | "kontaktaufnahme" | "vorbereitung" | "registrierung" | 
                   "verifizierung" | "wetten" | "auszahlung" | "abgeschlossen";
 }
+
+// Create an admin user when the service initializes
+(async () => {
+  try {
+    // Check if the admin already exists
+    const { data: existingUsers } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('email', 'admin@betclever.de');
+    
+    if (!existingUsers || existingUsers.length === 0) {
+      console.log("Creating admin user...");
+      
+      // Create admin auth user
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: 'admin@betclever.de',
+        password: 'Ver4Wittert!',
+      });
+      
+      if (authError) {
+        console.error("Error creating admin auth:", authError);
+        return;
+      }
+      
+      if (!authData?.user) {
+        console.error("No user data returned when creating admin");
+        return;
+      }
+      
+      // Create admin profile
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert({
+          id: authData.user.id,
+          username: 'admin',
+          email: 'admin@betclever.de',
+          is_admin: true,
+          is_locked: false,
+        });
+      
+      if (profileError) {
+        console.error("Error creating admin profile:", profileError);
+      } else {
+        console.log("Admin user created successfully");
+      }
+    }
+  } catch (err) {
+    console.error("Error in admin creation:", err);
+  }
+})();
 
 export const supabaseService = {
   // User Authentication
@@ -141,10 +192,16 @@ export const supabaseService = {
   async logout(): Promise<void> {
     const { error } = await supabase.auth.signOut();
     if (error) throw new Error(error.message);
-    localStorage.removeItem("currentUserId");
   },
   
   async getCurrentUser(): Promise<User | null> {
+    // First check if we have an active session
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError || !sessionData.session) {
+      return null;
+    }
+    
     const { data, error } = await supabase.auth.getUser();
     
     if (error || !data.user) {
