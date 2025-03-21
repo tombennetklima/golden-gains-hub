@@ -6,10 +6,11 @@ import { useEffect, useState } from "react";
 import { CheckCircle } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 const Teilnahme = () => {
   const [hasReadTerms, setHasReadTerms] = useState(false);
-  const [hasBankAccount, setHasBankAccount] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,12 +36,12 @@ const Teilnahme = () => {
   }, []);
 
   const handleSubmit = () => {
-    if (!hasReadTerms || !hasBankAccount) {
-      toast.error("Bitte bestätige, dass du die Teilnahmebedingungen gelesen hast und ein Bankkonto eröffnet hast");
+    if (!hasReadTerms) {
+      toast.error("Bitte bestätige, dass du die Teilnahmebedingungen gelesen hast");
       return;
     }
     
-    window.open("https://form.jotform.com/250773154185055", "_blank");
+    navigate("/auth");
   };
 
   const requirements = [
@@ -161,22 +162,6 @@ const Teilnahme = () => {
                       className="text-betclever-darkblue/80 cursor-pointer"
                     >
                       Ich habe die Teilnahmebedingungen gelesen und verstanden
-                    </label>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <Checkbox 
-                      id="bank" 
-                      checked={hasBankAccount}
-                      onCheckedChange={(checked) => {
-                        setHasBankAccount(checked === true);
-                      }}
-                      className="mt-1 data-[state=checked]:bg-betclever-gold data-[state=checked]:border-betclever-gold"
-                    />
-                    <label 
-                      htmlFor="bank" 
-                      className="text-betclever-darkblue/80 cursor-pointer"
-                    >
-                      Ich habe bereits ein Bankkonto bei der Deutschen Bank eröffnet
                     </label>
                   </div>
                 </div>

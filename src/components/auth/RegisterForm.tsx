@@ -48,7 +48,6 @@ const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
     setError(null);
 
     try {
-      // In a real app, this would be an API call to your auth service
       await mockAuthService.register(values.username, values.email, values.password);
       onSuccess();
     } catch (err) {

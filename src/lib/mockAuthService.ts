@@ -1,3 +1,4 @@
+
 // This is a mock service that simulates authentication functionality
 // In a real application, this would be replaced with actual API calls
 
