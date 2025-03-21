@@ -24,7 +24,6 @@ const UserProfileForm = ({
   const [profile, setProfile] = useState<UserProfile>({
     firstName: "",
     lastName: "",
-    email: "",
     phone: "",
     street: "",
     houseNumber: "",
@@ -39,7 +38,6 @@ const UserProfileForm = ({
       setProfile({
         firstName: "",
         lastName: "",
-        email: "",
         phone: "",
         street: "",
         houseNumber: "",

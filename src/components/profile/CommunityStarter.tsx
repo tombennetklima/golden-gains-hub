@@ -1,11 +1,11 @@
 
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { mockAuthService, User, UserProfile, DocumentUpload } from "@/lib/mockAuthService";
+import { mockAuthService, User, UserProfile, DocumentUpload as DocumentUploadType } from "@/lib/mockAuthService";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import UserProfileForm from "./UserProfileForm";
-import DocumentUpload from "./DocumentUpload";
+import DocumentUploadComp from "./DocumentUpload";
 import UserSubmitConfirmation from "./UserSubmitConfirmation";
 import { FileCheck, UserCheck, CreditCard, Landmark } from "lucide-react";
 
@@ -16,7 +16,7 @@ interface CommunityStarterProps {
 
 const CommunityStarter = ({ user, onUpdate }: CommunityStarterProps) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [documents, setDocuments] = useState<DocumentUpload[]>([]);
+  const [documents, setDocuments] = useState<DocumentUploadType[]>([]);
   const [isProfileLocked, setIsProfileLocked] = useState(false);
   const { toast } = useToast();
 
@@ -114,7 +114,7 @@ const CommunityStarter = ({ user, onUpdate }: CommunityStarterProps) => {
             </AccordionTrigger>
             <AccordionContent>
               <div className="pt-4">
-                <DocumentUpload
+                <DocumentUploadComp
                   userId={user.id}
                   documentType="id"
                   title="Ausweisdokumente"
@@ -136,7 +136,7 @@ const CommunityStarter = ({ user, onUpdate }: CommunityStarterProps) => {
             </AccordionTrigger>
             <AccordionContent>
               <div className="pt-4">
-                <DocumentUpload
+                <DocumentUploadComp
                   userId={user.id}
                   documentType="card"
                   title="Karten"
@@ -158,7 +158,7 @@ const CommunityStarter = ({ user, onUpdate }: CommunityStarterProps) => {
             </AccordionTrigger>
             <AccordionContent>
               <div className="pt-4">
-                <DocumentUpload
+                <DocumentUploadComp
                   userId={user.id}
                   documentType="bank"
                   title="Bankdokumente"
