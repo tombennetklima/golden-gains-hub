@@ -1,12 +1,20 @@
 
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { mockAuthService, User } from "@/lib/mockAuthService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Edit, Trash2, Save, X, UserCircle, KeyRound } from "lucide-react";
+import { 
+  Search, 
+  Edit, 
+  Trash2, 
+  KeyRound, 
+  UserCircle, 
+  Info,
+  Eye
+} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -24,11 +32,15 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import StatusDisplay from "@/components/profile/StatusDisplay";
+import CommunityStarter from "@/components/profile/CommunityStarter";
+import UserDashboardViewer from "@/components/admin/UserDashboardViewer";
 
 const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
+  const [viewUserDashboard, setViewUserDashboard] = useState<string | null>(null);
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<User[]>([]);
@@ -67,6 +79,25 @@ const Dashboard = () => {
     
     checkAuth();
   }, [navigate]);
+
+  const refreshUserData = async () => {
+    if (!user) return;
+    
+    try {
+      const currentUser = await mockAuthService.getCurrentUser();
+      if (currentUser) {
+        setUser(currentUser);
+      }
+      
+      if (user.isAdmin) {
+        const users = await mockAuthService.getAllUsers();
+        setAllUsers(users);
+        setSearchResults(users);
+      }
+    } catch (error) {
+      console.error("Error refreshing user data:", error);
+    }
+  };
 
   const handleSearch = async () => {
     if (!user?.isAdmin) return;
@@ -190,6 +221,10 @@ const Dashboard = () => {
     }
   };
 
+  const handleViewUserDashboard = (userId: string) => {
+    setViewUserDashboard(userId);
+  };
+
   if (isLoading) {
     return (
       <div className="flex flex-col min-h-screen">
@@ -218,13 +253,16 @@ const Dashboard = () => {
           {user?.isAdmin && (
             <div className="mb-8">
               <Button 
-                onClick={() => setShowAdminPanel(!showAdminPanel)}
+                onClick={() => {
+                  setShowAdminPanel(!showAdminPanel);
+                  setViewUserDashboard(null);
+                }}
                 className="bg-betclever-gold hover:bg-betclever-gold/90 mb-4"
               >
                 {showAdminPanel ? "Dashboard anzeigen" : "Accounts verwalten"}
               </Button>
               
-              {showAdminPanel && (
+              {showAdminPanel && !viewUserDashboard && (
                 <div className="bg-white p-6 rounded-lg shadow-md">
                   <h2 className="text-2xl font-bold mb-4">Benutzerverwaltung</h2>
                   
@@ -250,7 +288,7 @@ const Dashboard = () => {
                         <TableRow>
                           <TableHead>Benutzername</TableHead>
                           <TableHead>E-Mail</TableHead>
-                          <TableHead>Admin</TableHead>
+                          <TableHead>Status</TableHead>
                           <TableHead className="text-right">Aktionen</TableHead>
                         </TableRow>
                       </TableHeader>
@@ -267,9 +305,22 @@ const Dashboard = () => {
                               <TableCell>{user.username}</TableCell>
                               <TableCell>{user.email}</TableCell>
                               <TableCell>
-                                {user.isAdmin ? "Ja" : "Nein"}
+                                {user.documentsStatus?.uploadStatus === "pending_review" && 
+                                  <span className="px-2 py-1 bg-amber-100 text-amber-800 rounded-full text-xs">
+                                    Prüfung erforderlich
+                                  </span>
+                                }
                               </TableCell>
                               <TableCell className="text-right space-x-1">
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  onClick={() => handleViewUserDashboard(user.id)}
+                                  title="Dashboard anzeigen"
+                                  className="text-blue-500"
+                                >
+                                  <Eye size={16} />
+                                </Button>
                                 <Button
                                   variant="outline"
                                   size="icon"
@@ -306,23 +357,34 @@ const Dashboard = () => {
                   </div>
                 </div>
               )}
+              
+              {showAdminPanel && viewUserDashboard && (
+                <UserDashboardViewer 
+                  userId={viewUserDashboard}
+                  onBack={() => setViewUserDashboard(null)}
+                  onUserUpdated={refreshUserData}
+                />
+              )}
             </div>
           )}
           
           {!showAdminPanel && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="space-y-8">
+              {user?.documentsStatus && (
+                <StatusDisplay status={user.documentsStatus} />
+              )}
+              
+              <div className="bg-white p-6 rounded-lg shadow-md border">
                 <div className="flex items-center gap-3 mb-4">
-                  <UserCircle className="h-8 w-8 text-betclever-gold" />
-                  <h2 className="text-xl font-semibold">Profil</h2>
+                  <Info className="h-6 w-6 text-betclever-gold" />
+                  <h2 className="text-xl font-semibold">Leitfaden</h2>
                 </div>
                 <p className="text-gray-600">
-                  <strong>Benutzername:</strong> {user?.username}
-                </p>
-                <p className="text-gray-600">
-                  <strong>E-Mail:</strong> {user?.email}
+                  Mehr Informationen folgen in Kürze...
                 </p>
               </div>
+              
+              <CommunityStarter user={user} onUpdate={refreshUserData} />
             </div>
           )}
         </div>
