@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { mockAuthService } from "@/lib/mockAuthService";
+import { supabaseService } from "@/lib/supabaseService";
 import { useNavigate } from "react-router-dom";
 
 const loginSchema = z.object({
@@ -39,7 +39,7 @@ const LoginForm = ({ onSuccess, onForgotPassword }: LoginFormProps) => {
     setError(null);
 
     try {
-      await mockAuthService.login(values.email, values.password);
+      await supabaseService.login(values.email, values.password);
       // Redirect to dashboard after successful login
       navigate("/dashboard");
       onSuccess();

@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { mockAuthService, UserProfile } from "@/lib/mockAuthService";
+import { supabaseService, UserProfile } from "@/lib/supabaseService";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -61,7 +61,7 @@ const UserProfileForm = ({
     setIsLoading(true);
     
     try {
-      await mockAuthService.updateUserProfile(userId, profile);
+      await supabaseService.updateUserProfile(userId, profile);
       toast({
         title: "Profil aktualisiert",
         description: "Deine Daten wurden erfolgreich gespeichert."

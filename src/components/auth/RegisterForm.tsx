@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
-import { mockAuthService } from "@/lib/mockAuthService";
+import { supabaseService } from "@/lib/supabaseService";
 
 const registerSchema = z.object({
   username: z.string().min(3, "Benutzername muss mindestens 3 Zeichen lang sein"),
@@ -48,7 +48,7 @@ const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
     setError(null);
 
     try {
-      await mockAuthService.register(values.username, values.email, values.password);
+      await supabaseService.register(values.username, values.email, values.password);
       onSuccess();
     } catch (err) {
       setError("Diese E-Mail-Adresse wird bereits verwendet. Bitte wähle eine andere.");

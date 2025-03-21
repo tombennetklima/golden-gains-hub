@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { mockAuthService } from "@/lib/mockAuthService";
+import { supabaseService } from "@/lib/supabaseService";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, CheckCircle } from "lucide-react";
@@ -34,7 +34,7 @@ const UserSubmitConfirmation = ({
     setIsLoading(true);
     
     try {
-      await mockAuthService.submitDocumentsForReview(userId);
+      await supabaseService.submitDocumentsForReview(userId);
       
       toast({
         title: "Erfolgreich eingereicht",

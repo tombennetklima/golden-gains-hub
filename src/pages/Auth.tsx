@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LoginForm from "@/components/auth/LoginForm";
@@ -8,6 +8,7 @@ import ForgotPasswordForm from "@/components/auth/ForgotPasswordForm";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
+import { supabaseService } from "@/lib/supabaseService";
 
 export type AuthMode = "login" | "register" | "forgot-password";
 
@@ -15,6 +16,18 @@ const Auth = () => {
   const [mode, setMode] = useState<AuthMode>("login");
   const navigate = useNavigate();
   const { toast } = useToast();
+  
+  // Check if user is already logged in
+  useEffect(() => {
+    const checkAuth = async () => {
+      const user = await supabaseService.getCurrentUser();
+      if (user) {
+        navigate('/dashboard');
+      }
+    };
+    
+    checkAuth();
+  }, [navigate]);
   
   return (
     <div className="flex flex-col min-h-screen">

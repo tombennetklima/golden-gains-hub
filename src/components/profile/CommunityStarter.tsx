@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { mockAuthService, User, UserProfile, DocumentUpload as DocumentUploadType } from "@/lib/mockAuthService";
+import { supabaseService, User, UserProfile, DocumentUpload as DocumentUploadType } from "@/lib/supabaseService";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import UserProfileForm from "./UserProfileForm";
@@ -24,7 +24,7 @@ const CommunityStarter = ({ user, onUpdate }: CommunityStarterProps) => {
     const loadUserData = async () => {
       setIsLoading(true);
       try {
-        const userDocs = await mockAuthService.getUserDocuments(user.id);
+        const userDocs = await supabaseService.getUserDocuments(user.id);
         setDocuments(userDocs);
         setIsProfileLocked(user.profile?.isLocked || false);
       } catch (error) {

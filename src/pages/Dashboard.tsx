@@ -1,9 +1,8 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { mockAuthService, User } from "@/lib/mockAuthService";
+import { supabaseService, User } from "@/lib/supabaseService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { 
@@ -55,7 +54,7 @@ const Dashboard = () => {
   useEffect(() => {
     const checkAuth = async () => {
       setIsLoading(true);
-      const currentUser = await mockAuthService.getCurrentUser();
+      const currentUser = await supabaseService.getCurrentUser();
       
       if (!currentUser) {
         navigate("/auth");
@@ -66,7 +65,7 @@ const Dashboard = () => {
       
       if (currentUser.isAdmin) {
         try {
-          const users = await mockAuthService.getAllUsers();
+          const users = await supabaseService.getAllUsers();
           setAllUsers(users);
           setSearchResults(users);
         } catch (error) {
@@ -84,13 +83,13 @@ const Dashboard = () => {
     if (!user) return;
     
     try {
-      const currentUser = await mockAuthService.getCurrentUser();
+      const currentUser = await supabaseService.getCurrentUser();
       if (currentUser) {
         setUser(currentUser);
       }
       
       if (user.isAdmin) {
-        const users = await mockAuthService.getAllUsers();
+        const users = await supabaseService.getAllUsers();
         setAllUsers(users);
         setSearchResults(users);
       }
@@ -107,7 +106,7 @@ const Dashboard = () => {
       if (searchQuery.trim() === "") {
         setSearchResults(allUsers);
       } else {
-        const results = await mockAuthService.searchUsers(searchQuery);
+        const results = await supabaseService.searchUsers(searchQuery);
         setSearchResults(results);
       }
     } catch (error) {
@@ -130,7 +129,7 @@ const Dashboard = () => {
     if (!editUser) return;
     
     try {
-      await mockAuthService.updateUser(editUser.id, {
+      await supabaseService.updateUser(editUser.id, {
         username: editUser.username,
         email: editUser.email,
         isAdmin: editUser.isAdmin,
@@ -163,31 +162,21 @@ const Dashboard = () => {
 
   const handleResetPassword = (userId: string) => {
     setEditUserPassword({ userId, password: "" });
+    
+    toast({
+      title: "Hinweis",
+      description: "Passwörter können nicht direkt geändert werden mit Supabase. Bitte verwende die 'Passwort vergessen' Funktion.",
+      variant: "destructive",
+    });
   };
 
   const handleSavePassword = async () => {
-    if (!editUserPassword) return;
-    
-    try {
-      await mockAuthService.updateUserPassword(
-        editUserPassword.userId,
-        editUserPassword.password
-      );
-      
-      toast({
-        title: "Passwort zurückgesetzt",
-        description: "Das Passwort wurde erfolgreich zurückgesetzt.",
-      });
-      
-      setEditUserPassword(null);
-    } catch (error) {
-      console.error("Error resetting password:", error);
-      toast({
-        title: "Fehler",
-        description: "Das Passwort konnte nicht zurückgesetzt werden.",
-        variant: "destructive",
-      });
-    }
+    toast({
+      title: "Nicht unterstützt",
+      description: "Diese Funktion wird mit Supabase nicht unterstützt.",
+      variant: "destructive",
+    });
+    setEditUserPassword(null);
   };
 
   const handleDeleteConfirm = (userId: string) => {
@@ -198,7 +187,7 @@ const Dashboard = () => {
     if (!deleteUserId) return;
     
     try {
-      await mockAuthService.deleteUser(deleteUserId);
+      await supabaseService.deleteUser(deleteUserId);
       
       // Update local data
       const updatedUsers = allUsers.filter(u => u.id !== deleteUserId);

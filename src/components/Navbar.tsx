@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, User, LogOut } from "lucide-react";
-import { mockAuthService } from "@/lib/mockAuthService";
+import { supabaseService } from "@/lib/supabaseService";
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -24,7 +24,7 @@ const Navbar = () => {
   // Check authentication status on mount and when location changes
   useEffect(() => {
     const checkAuth = async () => {
-      const user = await mockAuthService.getCurrentUser();
+      const user = await supabaseService.getCurrentUser();
       setIsLoggedIn(!!user);
       setCurrentUser(user);
     };
@@ -50,7 +50,7 @@ const Navbar = () => {
   }, [location.pathname]);
 
   const handleLogout = async () => {
-    await mockAuthService.logout();
+    await supabaseService.logout();
     setIsLoggedIn(false);
     setCurrentUser(null);
     toast({

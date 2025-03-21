@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { mockAuthService } from "@/lib/mockAuthService";
+import { supabaseService } from "@/lib/supabaseService";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Upload, X, FileCheck } from "lucide-react";
@@ -38,6 +38,19 @@ const DocumentUpload = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const fileList = Array.from(e.target.files);
+      // Validate file types
+      const validFileTypes = ["image/jpeg", "image/jpg", "image/png", "application/pdf"];
+      const invalidFiles = fileList.filter(file => !validFileTypes.includes(file.type));
+      
+      if (invalidFiles.length > 0) {
+        toast({
+          title: "Ungültiger Dateityp",
+          description: "Nur PNG, JPG und PDF Dateien sind erlaubt.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
       setNewFiles(prev => [...prev, ...fileList]);
     }
   };
@@ -52,7 +65,7 @@ const DocumentUpload = ({
     setIsLoading(true);
     
     try {
-      // Convert files to base64 strings (in a real app, you would upload to storage)
+      // Convert files to base64 strings for upload
       const filePromises = newFiles.map(file => {
         return new Promise<string>((resolve) => {
           const reader = new FileReader();
@@ -66,7 +79,7 @@ const DocumentUpload = ({
       const base64Files = await Promise.all(filePromises);
       const allFiles = [...files, ...base64Files];
       
-      await mockAuthService.uploadDocument(userId, documentType, allFiles);
+      await supabaseService.uploadDocument(userId, documentType, allFiles);
       
       setFiles(allFiles);
       setNewFiles([]);
@@ -91,6 +104,19 @@ const DocumentUpload = ({
     }
   };
 
+  // Get file extension from path or base64
+  const getFileExtension = (filePath: string): string => {
+    if (filePath.startsWith('data:image/png')) return 'PNG';
+    if (filePath.startsWith('data:image/jpeg') || filePath.startsWith('data:image/jpg')) return 'JPEG';
+    if (filePath.startsWith('data:application/pdf')) return 'PDF';
+    
+    // For URLs, try to extract from path
+    const url = new URL(filePath);
+    const path = url.pathname;
+    const extension = path.split('.').pop()?.toUpperCase();
+    return extension || 'DATEI';
+  };
+
   return (
     <div className="p-6 border rounded-lg bg-white shadow-sm">
       <h3 className="text-lg font-medium mb-2">{title}</h3>
@@ -105,6 +131,7 @@ const DocumentUpload = ({
             id={`file-upload-${documentType}`}
             type="file"
             multiple
+            accept=".png,.jpg,.jpeg,.pdf"
             onChange={handleFileChange}
             disabled={isLoading || isLocked}
             className="hidden"
@@ -130,7 +157,7 @@ const DocumentUpload = ({
             {files.map((file, index) => (
               <div key={index} className="flex items-center p-2 bg-gray-50 rounded">
                 <FileCheck size={16} className="mr-2 text-green-600" />
-                <span className="text-sm truncate flex-grow">Dokument {index + 1}</span>
+                <span className="text-sm truncate flex-grow">Dokument {index + 1} ({getFileExtension(file)})</span>
               </div>
             ))}
           </div>
