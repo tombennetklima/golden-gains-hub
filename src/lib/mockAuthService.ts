@@ -1,4 +1,3 @@
-
 // This is a mock service that simulates authentication functionality
 // In a real application, this would be replaced with actual API calls
 
@@ -90,6 +89,24 @@ export const mockAuthService = {
     }
     
     return users[userId] || null;
+  },
+  
+  // Reset password functionality
+  async resetPassword(email: string, token: string, newPassword: string): Promise<void> {
+    await delay(1000); // Simulate network delay
+    
+    // In a real app, you would validate the token
+    // For the mock service, we'll just find the user by email and update their password
+    const user = Object.values(users).find(user => user.email === email);
+    
+    if (!user) {
+      throw new Error("User not found");
+    }
+    
+    // Update the password
+    userPasswords[user.id] = newPassword;
+    
+    return;
   },
   
   // Admin Functions
