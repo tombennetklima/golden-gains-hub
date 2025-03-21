@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { mockAuthService } from "@/lib/mockAuthService";
 import { Button } from "@/components/ui/button";
@@ -29,6 +29,11 @@ const DocumentUpload = ({
   const [files, setFiles] = useState<string[]>(existingFiles);
   const [newFiles, setNewFiles] = useState<File[]>([]);
   const { toast } = useToast();
+
+  // Update files state when existingFiles change (for example, when accordion sections change)
+  useEffect(() => {
+    setFiles(existingFiles);
+  }, [existingFiles]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {

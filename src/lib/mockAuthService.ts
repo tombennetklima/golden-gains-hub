@@ -1,4 +1,3 @@
-
 // This is a mock service that simulates authentication functionality
 // In a real application, this would be replaced with actual API calls
 
@@ -33,7 +32,8 @@ export interface DocumentUpload {
 
 export interface DocumentsStatus {
   uploadStatus: "not_complete" | "pending_review" | "approved" | "rejected";
-  communityStatus: "not_started" | "in_progress" | "complete";
+  communityStatus: "not_started" | "kontaktaufnahme" | "vorbereitung" | "registrierung" | 
+                  "verifizierung" | "wetten" | "auszahlung" | "abgeschlossen";
 }
 
 // Simulate localStorage for user data
@@ -364,6 +364,36 @@ export const mockAuthService = {
       documentsStatus: {
         ...user.documentsStatus,
         uploadStatus: status
+      }
+    };
+    
+    return users[userId];
+  },
+  
+  // Update user community status (admin only)
+  async updateUserCommunityStatus(userId: string, status: "not_started" | "kontaktaufnahme" | "vorbereitung" | 
+                                 "registrierung" | "verifizierung" | "wetten" | "auszahlung" | "abgeschlossen"): Promise<User> {
+    await delay(1000);
+    
+    // In a real app, you would check if the current user is an admin
+    const currentUserId = localStorage.getItem("currentUserId");
+    const currentUser = currentUserId ? users[currentUserId] : null;
+    
+    if (!currentUser?.isAdmin) {
+      throw new Error("Unauthorized");
+    }
+    
+    const user = users[userId];
+    
+    if (!user) {
+      throw new Error("User not found");
+    }
+    
+    users[userId] = {
+      ...user,
+      documentsStatus: {
+        ...user.documentsStatus,
+        communityStatus: status
       }
     };
     

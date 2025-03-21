@@ -14,8 +14,21 @@ import {
   CreditCard, 
   Landmark, 
   Edit,
-  ArrowLeft
+  ArrowLeft,
+  Contact,
+  FileText,
+  UserPlus,
+  CheckCheck,
+  Ticket,
+  Wallet
 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface UserDashboardViewerProps {
   userId: string;
@@ -72,6 +85,29 @@ const UserDashboardViewer = ({ userId, onBack, onUserUpdated }: UserDashboardVie
     }
   };
 
+  const getCommunityStatusBadge = (status?: string) => {
+    switch (status) {
+      case "abgeschlossen":
+        return <Badge className="bg-green-600">Abgeschlossen</Badge>;
+      case "auszahlung":
+        return <Badge className="bg-green-500">Auszahlung</Badge>;
+      case "wetten":
+        return <Badge className="bg-blue-500">Wetten</Badge>;
+      case "verifizierung":
+        return <Badge className="bg-amber-500">Verifizierung</Badge>;
+      case "registrierung":
+        return <Badge className="bg-purple-500">Registrierung</Badge>;
+      case "vorbereitung":
+        return <Badge className="bg-gray-600">Vorbereitung</Badge>;
+      case "kontaktaufnahme":
+        return <Badge className="bg-blue-600">Kontaktaufnahme</Badge>;
+      case "not_started":
+        return <Badge className="bg-gray-400">Nicht gestartet</Badge>;
+      default:
+        return <Badge className="bg-gray-400">Nicht gestartet</Badge>;
+    }
+  };
+
   const handleApproveDocuments = async () => {
     try {
       await mockAuthService.updateUserDocumentStatus(userId, "approved");
@@ -100,6 +136,32 @@ const UserDashboardViewer = ({ userId, onBack, onUserUpdated }: UserDashboardVie
       onUserUpdated();
     } catch (error) {
       console.error("Error updating document status:", error);
+      toast({
+        title: "Fehler",
+        description: "Status konnte nicht aktualisiert werden.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleCommunityStatusChange = async (value: string) => {
+    if (!user) return;
+    
+    try {
+      await mockAuthService.updateUserCommunityStatus(
+        userId, 
+        value as "not_started" | "kontaktaufnahme" | "vorbereitung" | 
+              "registrierung" | "verifizierung" | "wetten" | "auszahlung" | "abgeschlossen"
+      );
+      
+      toast({
+        title: "Status aktualisiert",
+        description: "Tippgemeinschaft Status wurde aktualisiert."
+      });
+      
+      onUserUpdated();
+    } catch (error) {
+      console.error("Error updating community status:", error);
       toast({
         title: "Fehler",
         description: "Status konnte nicht aktualisiert werden.",
@@ -195,12 +257,37 @@ const UserDashboardViewer = ({ userId, onBack, onUserUpdated }: UserDashboardVie
       <div className="bg-white p-6 rounded-lg shadow-sm border">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Benutzerdetails</h2>
-          <div>
+          <div className="flex gap-2">
             {getStatusBadge(user.documentsStatus?.uploadStatus)}
+            {getCommunityStatusBadge(user.documentsStatus?.communityStatus)}
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <h3 className="text-lg font-medium mb-3">Tippgemeinschaft Status ändern</h3>
+          <div className="flex gap-4 items-center">
+            <Select 
+              onValueChange={handleCommunityStatusChange}
+              defaultValue={user.documentsStatus?.communityStatus || "not_started"}
+            >
+              <SelectTrigger className="w-[280px]">
+                <SelectValue placeholder="Status auswählen" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="not_started">Nicht gestartet</SelectItem>
+                <SelectItem value="kontaktaufnahme">Kontaktaufnahme</SelectItem>
+                <SelectItem value="vorbereitung">Vorbereitung</SelectItem>
+                <SelectItem value="registrierung">Registrierung</SelectItem>
+                <SelectItem value="verifizierung">Verifizierung</SelectItem>
+                <SelectItem value="wetten">Wetten</SelectItem>
+                <SelectItem value="auszahlung">Auszahlung</SelectItem>
+                <SelectItem value="abgeschlossen">Abgeschlossen</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <h3 className="text-lg font-medium mb-4 flex items-center">
               <UserCheck className="h-5 w-5 mr-2 text-betclever-gold" />

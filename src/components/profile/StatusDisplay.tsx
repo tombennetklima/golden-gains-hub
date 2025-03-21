@@ -6,7 +6,13 @@ import {
   Clock, 
   AlertCircle, 
   FileCheck, 
-  Users 
+  Users,
+  UserPlus,
+  FileText,
+  CheckCheck,
+  Ticket,
+  Wallet,
+  Contact
 } from "lucide-react";
 
 interface StatusDisplayProps {
@@ -26,8 +32,13 @@ const StatusDisplay = ({ status }: StatusDisplayProps) => {
 
   const getCommunityProgress = () => {
     switch (status.communityStatus) {
-      case "complete": return 100;
-      case "in_progress": return 50;
+      case "abgeschlossen": return 100;
+      case "auszahlung": return 85;
+      case "wetten": return 70;
+      case "verifizierung": return 55;
+      case "registrierung": return 40;
+      case "vorbereitung": return 25;
+      case "kontaktaufnahme": return 10;
       case "not_started": return 0;
       default: return 0;
     }
@@ -65,10 +76,20 @@ const StatusDisplay = ({ status }: StatusDisplayProps) => {
 
   const getCommunityStatusIcon = () => {
     switch (status.communityStatus) {
-      case "complete":
+      case "abgeschlossen":
         return <Check className="h-5 w-5 text-green-600" />;
-      case "in_progress":
-        return <Clock className="h-5 w-5 text-amber-500" />;
+      case "auszahlung":
+        return <Wallet className="h-5 w-5 text-green-600" />;
+      case "wetten":
+        return <Ticket className="h-5 w-5 text-blue-500" />;
+      case "verifizierung":
+        return <CheckCheck className="h-5 w-5 text-amber-500" />;
+      case "registrierung":
+        return <UserPlus className="h-5 w-5 text-purple-500" />;
+      case "vorbereitung":
+        return <FileText className="h-5 w-5 text-gray-600" />;
+      case "kontaktaufnahme":
+        return <Contact className="h-5 w-5 text-blue-600" />;
       case "not_started":
         return <Users className="h-5 w-5 text-gray-400" />;
       default:
@@ -78,10 +99,20 @@ const StatusDisplay = ({ status }: StatusDisplayProps) => {
 
   const getCommunityStatusText = () => {
     switch (status.communityStatus) {
-      case "complete":
+      case "abgeschlossen":
         return "Abgeschlossen";
-      case "in_progress":
-        return "In Bearbeitung";
+      case "auszahlung":
+        return "Auszahlung";
+      case "wetten":
+        return "Wetten";
+      case "verifizierung":
+        return "Verifizierung";
+      case "registrierung":
+        return "Registrierung";
+      case "vorbereitung":
+        return "Vorbereitung";
+      case "kontaktaufnahme":
+        return "Kontaktaufnahme";
       case "not_started":
         return "Nicht gestartet";
       default:
